@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JS primeros códigos</title>
+    <style>
+        .container{
+            text-align: center;
+            font-family: Verdana;
+        }
+        #copy-text{
+            text-align: left;
+            width: 300px;
+            height: 100px;
+            display: block;
+            position: relative;
+            left: 0px;
+            right: 0px;
+            margin: auto;
+            border: 1px solid black;
+            outline: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>Implementación de ventana para copiar y pegar</h1>
+        <div id="copy-text" contenteditable="">Inserta aquí los elementos a pegar o copia el contenido.</div>
+        <button id="btn-copiar">Copiar</button>
+        <button id="btn-pegar">Pegar</button>
+    </div>
+    <div id="paste-here"></div>
+<script>
+    const copyButton = document.getElementById('btn-copiar');
+    const pasteButton = document.getElementById('btn-pegar');
+    copyButton.onclick = function(){
+        const content = document.getElementById('copy-text').innerHTML;
+        navigator.clipboard.writeText(content);
+    }
+    pasteButton.addEventListener('click', async (event) => {
+        const data = await navigator.clipboard.read();
+        const clipboardContent = data[0];
+        const type = clipboardContent.types[0];
+        if (type == 'text/plain'){
+            const blob = await clipboardContent.getType('text/plain');
+            var text = await blob.text();
+            var p = document.createElement('p');
+            p.innerHTML = text;
+            document.getElementById('paste-here').appendChild(p);
+        } else{
+            const blob = await clipboardContent.getType('image/png');
+            const url = window.URL.createObjectURL(blob);
+            const img = document.createElement('img');
+            img.src = url;
+            img.style.maxHeight = '200px';
+            document.getElementById('paste-here').appendChild(img);
+        }
+    })
+</script>
+
+</body>
+
+</html>
